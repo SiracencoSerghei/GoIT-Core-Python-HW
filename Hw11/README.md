@@ -12,3 +12,17 @@ AddressBook реалізує метод iterator, який повертає ге
 setter та getter логіку для атрибутів value спадкоємців Field.
 Перевірку на коректність веденого номера телефону setter для value класу Phone.
 Перевірку на коректність веденого дня народження setter для value класу Birthday.
+
+## work in console:
+
+    hello
+
+    add <name> <phone>
+
+    change <name> <old_phone> <new_phone>
+
+    show
+
+    for exit:
+
+    "goodbye", "close", "exit" or "."
