@@ -9,3 +9,7 @@ class Phone(Field):
     def is_valid_phone(self, value):
         """return boolean from check"""
         return value.isdigit() and len(value) == 10
+    def __set__(self, new_value):
+        if not self.is_valid_phone(new_value):
+            raise ValueError("Phone number must be a ten digit string of digits")
+        super().__set__(new_value)

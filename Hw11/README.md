@@ -23,6 +23,10 @@ setter та getter логіку для атрибутів value спадкоєм
 
     show
 
+    daystobirthday
+
+    
+
     for exit:
 
     "goodbye", "close", "exit" or "."

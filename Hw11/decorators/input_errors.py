@@ -3,8 +3,17 @@ GREEN = "\033[92m"
 BLUE = "\033[94m"
 RESET = "\033[0m"
 
+
 def input_errors(func):
-    """Decorator to handle input errors"""
+    """Decorator to handle input errors.
+
+        Args:
+            func (function): The function to decorate.
+
+        Returns:
+            function: The decorated function that handles input errors.
+        """
+
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
@@ -14,4 +23,5 @@ def input_errors(func):
             return f"{RED}{e}.{RESET}"
         except IndexError as e:
             return f"{RED}{e}.{RESET}"
+
     return wrapper
