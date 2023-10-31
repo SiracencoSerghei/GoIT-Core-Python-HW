@@ -119,7 +119,7 @@ def showall(chunk_size=1):
         for record in chunk:
             name = record.name.value
             phones = "; ".join([str(phone) for phone in record.phones])
-            birthday = record.birthday if record.birthday else "N/A"
+            birthday = str(record.birthday) if record.birthday else "N/A"
             print(f"{BLUE}{name:<15}{RESET} | {BLUE}{phones:^15}{RESET} | {BLUE}{birthday:^15}{RESET}")
         i += chunk_size
 
@@ -235,14 +235,12 @@ def main():
                 print(f"{RED}Example: \nadd-birthday <name> <YYYY-MM-DD>{RESET}")
             else:
                 add_birthday(input_data[1], input_data[2])
-                print(f"{PINK}{input_data[1]}'s birthday is {input_data[2]}{RESET}")
         elif input_command == "edit-birthday":
             if len(input_data) < 3:
                 print(f"{RED}You need to provide a name and birthday date after 'add-birthday'.{RESET}")
                 print(f"{RED}Example: \nedit-birthday <name> <YYYY-MM-DD>{RESET}")
             else:
                 edit_birthday(input_data[1], input_data[2])
-                print(f"{PINK}New {input_data[1]}'s birthday is {input_data[2]}{RESET}")
         else:
             print(f"{RED}Don't know this command{RESET}")
 

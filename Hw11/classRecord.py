@@ -57,7 +57,7 @@ class Record:
                Args:
                    value (str): Рядок з датою народження у форматі '%Y-%m-%d'.
                """
-        self.birthday = value
+        self.birthday = Birthday(value)
 
     def edit_birthday(self, new_value):
         """Редагує дату народження контакту.
@@ -68,7 +68,7 @@ class Record:
         if not new_value:
             self.birthday = None
         else:
-            self.birthday = new_value
+            self.birthday = Birthday(new_value)
 
     def add_phone(self, phone):
         """Додає телефонний номер контакту.
