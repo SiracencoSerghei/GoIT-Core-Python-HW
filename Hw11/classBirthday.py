@@ -1,4 +1,4 @@
-import time
+import datetime
 
 from field import Field
 
@@ -12,7 +12,7 @@ class Birthday(Field):
     @staticmethod
     def is_valid_birthday(value):
         try:
-            time.strptime(value, '%Y-%m-%d')
+            datetime.strptime(value, '%Y-%m-%d')
             return True
         except ValueError:
             return False

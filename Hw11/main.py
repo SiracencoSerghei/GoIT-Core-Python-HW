@@ -8,6 +8,7 @@ RED = "\033[91m"
 GREEN = "\033[92m"
 BLUE = "\033[94m"
 YELLOW = "\033[43m"
+PINK = "\033[95m"
 RESET = "\033[0m"
 #  ================================
 book = AddressBook()
@@ -98,7 +99,7 @@ def get_phone(name):
 
 
 @input_errors
-def showall():
+def showall(chunk_size=1):
     """Display all contacts in the address book.
 
         Returns:
@@ -106,11 +107,22 @@ def showall():
         """
     print(f"{BLUE}{'NAME':^15}{RESET} | {BLUE}{'PHONES':^15}{RESET} | {BLUE}{'BIRTHDAY':^15}{RESET}")
     print(f"_" * 48)
-    for record in book.values():
-        name = record.name.value
-        phones = "; ".join([str(phone) for phone in record.phones])
-        birthday = record.birthday if record.birthday else "N/A"
-        print(f"{BLUE}{name:<15}{RESET} | {BLUE}{phones:^15}{RESET} | {BLUE}{birthday:^15}{RESET}")
+
+    records = list(book.values())
+    num_records = len(records)
+    i = 0
+    while i < num_records:
+        chunk = records[i:i + chunk_size]
+        for record in chunk:
+            name = record.name.value
+            phones = "; ".join([str(phone) for phone in record.phones])
+            birthday = record.birthday if record.birthday else "N/A"
+            print(f"{BLUE}{name:<15}{RESET} | {BLUE}{phones:^15}{RESET} | {BLUE}{birthday:^15}{RESET}")
+        i += chunk_size
+
+        if i < num_records:
+            # Wait for Enter keypress to continue
+            input(f"{PINK}Press Enter to show the next chunk...{RESET}")
 
 
 @input_errors
@@ -124,6 +136,7 @@ def days_to_birthday(name):
         str: A message indicating the number of days to the next birthday or an error message.
     """
     contact = book.find(name)
+    print(f"{YELLOW}{contact}{RESET}")
 
     if contact is None:
         return f"{RED}There is no contact with the name '{name}'{RESET}"
@@ -135,9 +148,35 @@ def days_to_birthday(name):
         elif days == 0:
             return f"{GREEN}{name}'s birthday is today!{RESET}"
         else:
+            # will never be executed.... because of Record class....
             return f"{GREEN}{name}'s birthday is in {-days} days{RESET}"
     else:
         return f"{RED}{name} has no birthday set{RESET}"
+
+
+@input_errors
+def add_birthday(name, date):
+    contact = book.find(name)
+
+    if contact is None:
+        return f"{RED}There is no contact with the name '{name}'{RESET}"
+    elif contact.birthday:
+        return f"{RED}If you want to change {name}'s birthday, use 'edit-birthday <new value>'{RESET}"
+    else:
+        contact.add_birthday(date)
+        return f"{GREEN} Was update {name}'s birthday date{RESET}"
+
+
+@input_errors
+def edit_birthday(name, date):
+    contact = book.find(name)
+
+    if contact is None:
+        return f"{RED}There is no contact with the name '{name}'{RESET}"
+    else:
+        contact.edit_birthday(date)
+        return f"{GREEN} Was update {name}'s birthday date{RESET}"
+
 
 known_commands = ("add", "change", "phone", "show", "hello")
 exit_commands = ("goodbye", "close", "exit", ".")
@@ -174,12 +213,33 @@ def main():
             elif input_command == "phone":
                 print(get_phone(input_data[1]))
             elif "show" in input_text:
-                showall()
-        elif input_command == "daystobirthday":
+                try:
+                    showall(int(input_data[1]))
+                except IndexError:
+                    print(f"{RED}You have to put correct chunk size. Example: \nshow <chunk size>{RESET}")
+        elif input_command == "days-to-birthday":
             if len(input_data) < 2:
-                print(f"{RED}You need to provide a name after 'daystobirthday'. Example: daystobirthday <name>{RESET}")
+                # noinspection LongLine
+                print(
+                    f"{RED}You need to provide a name after 'days-to-birthday'. "
+                    f"Example: days-to-birthday <name>{RESET}"
+                )
             else:
                 print(days_to_birthday(input_data[1]))
+        elif input_command == "add-birthday":
+            if len(input_data) < 3:
+                print(f"{RED}You need to provide a name and birthday date after 'add-birthday'.{RESET}")
+                print(f"{RED}Example: \nadd-birthday <name> <YYYY-MM-DD>{RESET}")
+            else:
+                add_birthday(input_data[1], input_data[2])
+                print(f"{PINK}{input_data[1]}'s birthday is {input_data[2]}{RESET}")
+        elif input_command == "edit-birthday":
+            if len(input_data) < 3:
+                print(f"{RED}You need to provide a name and birthday date after 'add-birthday'.{RESET}")
+                print(f"{RED}Example: \nedit-birthday <name> <YYYY-MM-DD>{RESET}")
+            else:
+                edit_birthday(input_data[1], input_data[2])
+                print(f"{PINK}New {input_data[1]}'s birthday is {input_data[2]}{RESET}")
         else:
             print(f"{RED}Don't know this command{RESET}")
 

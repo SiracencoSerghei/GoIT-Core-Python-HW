@@ -37,12 +37,16 @@ class Record:
                 """
         if self.birthday:
             today = datetime.now()
-            birthday = datetime.strptime(self.birthday.value, '%Y-%m-%d').replace(year=today.year)
+            # print(today)
+            # print("1", self.birthday)
+            # print( datetime.strptime(self.birthday, '%Y-%m-%d').replace(year=today.year))
+            birthday = datetime.strptime(self.birthday, '%Y-%m-%d').replace(year=today.year)
 
             if today > birthday:
                 birthday = birthday.replace(year=today.year + 1)
 
             delta = birthday - today
+            # print("d", delta.days)
             return delta.days
         else:
             return None
@@ -53,7 +57,7 @@ class Record:
                Args:
                    value (str): Рядок з датою народження у форматі '%Y-%m-%d'.
                """
-        self.birthday = Birthday(value)
+        self.birthday = value
 
     def edit_birthday(self, new_value):
         """Редагує дату народження контакту.
@@ -64,7 +68,7 @@ class Record:
         if not new_value:
             self.birthday = None
         else:
-            self.birthday = Birthday(new_value)
+            self.birthday = new_value
 
     def add_phone(self, phone):
         """Додає телефонний номер контакту.
