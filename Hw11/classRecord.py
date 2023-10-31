@@ -40,7 +40,7 @@ class Record:
             # print(today)
             # print("1", self.birthday)
             # print( datetime.strptime(self.birthday, '%Y-%m-%d').replace(year=today.year))
-            birthday = datetime.strptime(self.birthday, '%Y-%m-%d').replace(year=today.year)
+            birthday = datetime.strptime(str(self.birthday), '%Y-%m-%d').replace(year=today.year)
 
             if today > birthday:
                 birthday = birthday.replace(year=today.year + 1)

@@ -146,6 +146,7 @@ def days_to_birthday(name):
 
     if contact.birthday:
         days = contact.days_to_birthday()
+        print(days)
         if days > 0:
             return f"{GREEN}{name} has {days} days before their next birthday{RESET}"
         elif days == 0:
