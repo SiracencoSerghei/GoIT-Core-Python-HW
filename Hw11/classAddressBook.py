@@ -1,5 +1,6 @@
 from collections import UserDict
 from classRecord import Record
+from addressBookIterator import AddressBookIterator
 
 
 class AddressBook(UserDict):
@@ -68,8 +69,9 @@ class AddressBook(UserDict):
         Yields:
             list: A list of records.
         """
-        records = list(self.values())
-        i = 0
-        while i < len(records):
-            yield records[i:i + chunk_size]
-            i += chunk_size
+        # records = list(self.values())
+        # i = 0
+        # while i < len(records):
+        #     yield records[i:i + chunk_size]
+        #     i += chunk_size
+        return AddressBookIterator(self.data, chunk_size)
