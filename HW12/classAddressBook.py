@@ -1,5 +1,6 @@
 from collections import UserDict
 from classRecord import Record
+import pickle
 
 
 class AddressBook(UserDict):
@@ -18,7 +19,7 @@ class AddressBook(UserDict):
             record = Record(record)
         self.data[record.name.value] = record
 
-    def find(self, name):
+    def find_name(self, name):
         """Find a record by name.
 
         Args:
@@ -73,3 +74,57 @@ class AddressBook(UserDict):
         while i < len(records):
             yield records[i:i + chunk_size]
             i += chunk_size
+
+    def save_to_file(self, file_name):
+        """
+        Save the instance to a binary file using pickle.
+
+        Args:
+            file_name (str): The name of the file to save the instance.
+
+        Returns:
+            None
+        """
+        with open(file_name, 'wb') as f:
+            pickle.dump(self, f)
+
+    @staticmethod
+    def load_from_file(file_name):
+        """
+        Load an instance from a binary file using pickle.
+
+        Args:
+            file_name (str): The name of the file to load the instance from.
+
+        Returns:
+            object: The loaded instance.
+        """
+        try:
+            with open(file_name, 'rb') as f:
+                return pickle.load(f)
+        except (FileNotFoundError, EOFError):
+            # Handle the case where the file is not found or empty
+            return AddressBook()
+
+    # def find(self, param):
+    #     """
+    #     Find records that match the given parameter.
+
+    #     Args:
+    #         param (str): The search parameter.
+
+    #     Returns:
+    #         str: A string containing the matching records, separated by newline.
+
+    #     Note:
+    #         If the search parameter is less than 3 characters, it returns an error message.
+    #     """
+    #     if len(param) < 3:
+    #         return "Sorry, search parameter must be less than 3 characters"
+
+    #     result = []
+    #     for record in self.values():
+    #         if param == str(record):
+    #             result.append(str(record))
+
+    #     return '\n'.join(result)

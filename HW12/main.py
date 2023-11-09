@@ -1,7 +1,7 @@
 """hw_11"""
-from field import Field
-from classPhone import Phone
-from className import Name
+# from field import Field
+# from classPhone import Phone
+# from className import Name
 from classAddressBook import AddressBook
 from classRecord import Record
 from decorators.input_errors import input_errors
@@ -15,6 +15,7 @@ PINK = "\033[95m"
 RESET = "\033[0m"
 #  ================================
 book = AddressBook()
+book.load_from_file('contact_book.bin')
 
 sanitize_phone_number = input_errors(sanitize_phone_number)
 
@@ -48,7 +49,7 @@ def add_contact(name, *phones):
     Returns:
         str: A message indicating the result of the operation.
     """
-    contact = book.find(name)
+    contact = book.find_name(name)
     if contact is None:
         contact = Record(name)
         book.add_record(contact)
@@ -56,9 +57,12 @@ def add_contact(name, *phones):
         sanitized_phone = sanitize_phone_number(phone)
         if sanitized_phone.isdigit():
             contact.add_phone(sanitized_phone)
-            return f"{GREEN}Phone {phone} was added to {name}{RESET}"
         else:
             return f"{RED}Phone {phone} is not valid and not added to {name}{RESET}"
+    # Save the address book to the file after all phone numbers are added
+    book.save_to_file('contact_book.bin')
+
+    return f"{GREEN}Contact {name} was added successfully!{RESET}"
 
 
 @input_errors
@@ -77,6 +81,8 @@ def change_contact(name, old_phone, phone):
         record = book.data[name]
         if old_phone in record.get_all_phones():
             record.edit_phone(old_phone, phone)
+            # Save the address book to a file after making the change
+            book.save_to_file('address_book.dat')
             return f"{GREEN} Contact {name}: {old_phone} was successfully changed!\n New data: {name}: {phone}{RESET}"
         else:
             return f"{RED}There is no number {phone} in {name} contact{RESET}"
@@ -109,7 +115,7 @@ def showall(chunk_size=1):
             None
         """
     print(f"{BLUE}{'NAME':^15}{RESET} | {BLUE}{'PHONES':^15}{RESET} | {BLUE}{'BIRTHDAY':^15}{RESET}")
-    print(f"_" * 48)
+    print("_" * 48)
 
     records = list(book.values())
     num_records = len(records)
@@ -138,7 +144,7 @@ def days_to_birthday(name):
     Returns:
         str: A message indicating the number of days to the next birthday or an error message.
     """
-    contact = book.find(name)
+    contact = book.find_name(name)
     print(f"{YELLOW}{contact}{RESET}")
 
     if contact is None:
@@ -160,7 +166,7 @@ def days_to_birthday(name):
 
 @input_errors
 def add_birthday(name, date):
-    contact = book.find(name)
+    contact = book.find_name(name)
 
     if contact is None:
         return f"{RED}There is no contact with the name '{name}'{RESET}"
@@ -168,17 +174,21 @@ def add_birthday(name, date):
         return f"{RED}If you want to change {name}'s birthday, use 'edit-birthday <new value>'{RESET}"
     else:
         contact.add_birthday(date)
+        # Save the address book to a file after adding the birthday
+        book.save_to_file('address_book.dat')
         return f"{GREEN} Was update {name}'s birthday date{RESET}"
 
 
 @input_errors
 def edit_birthday(name, date):
-    contact = book.find(name)
+    contact = book.find_name(name)
 
     if contact is None:
         return f"{RED}There is no contact with the name '{name}'{RESET}"
     else:
         contact.edit_birthday(date)
+        # Save the address book to a file after editing the birthday
+        book.save_to_file('address_book.dat')
         return f"{GREEN} Was update {name}'s birthday date{RESET}"
 
 
@@ -242,9 +252,22 @@ def main():
                 print(f"{RED}Example: \nedit-birthday <name> <YYYY-MM-DD>{RESET}")
             else:
                 edit_birthday(input_data[1], input_data[2])
+        # elif input_command == "find":
+        #     try:
+        #         search_param = input_data[1]
+        #         result = book.find(search_param)
+        #         print(f"{GREEN}Matching records:\n{result}{RESET}")
+        #     except IndexError:
+        #         print(f"{RED}You have to provide a search parameter after 'find'.{RESET}")
         else:
             print(f"{RED}Don't know this command{RESET}")
 
 
 if __name__ == "__main__":
+    try:
+        book.load_from_file('contact_book.bin')
+    except (FileNotFoundError, EOFError) as e:
+        print(f"{RED}Error loading address book: {e}{RESET}")
+        print(f"{YELLOW}Creating a new address book.{RESET}")
+
     main()

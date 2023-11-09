@@ -8,3 +8,23 @@
 ## Критерії прийому: 
 Програма не втрачає дані після виходу з програми та відновлює їх з файлу.
 Програма виводить список користувачів, які мають в імені або номері телефону є збіги із введеним рядком.
+
+## work in console:
+hello
+
+add <name> <phone>
+
+change <name> <old_phone> <new_phone>
+
+show <chunk size>
+
+days-to-birthday <name>
+
+add-birthday <name> <birthday date>
+
+edit-birthday <name> <new birthday date>
+
+find <search_parameters>
+
+## for exit:
+"goodbye", "close", "exit" or "."
