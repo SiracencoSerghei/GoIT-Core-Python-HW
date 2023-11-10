@@ -130,11 +130,8 @@ class AddressBook(UserDict):
         try:
             with open(file_name, 'r', encoding="utf-8") as f:
                 data = json.load(f)
-                print(data)
                 address_book = AddressBook()
-                print(address_book)
                 for name, record_data in data.items():
-                    print(record_data)
                     new_record = Record(record_data['name'])
                     phones = record_data['phones']
                     birthday = record_data['birthday']
