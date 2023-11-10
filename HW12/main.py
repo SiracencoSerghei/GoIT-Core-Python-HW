@@ -15,7 +15,7 @@ PINK = "\033[95m"
 RESET = "\033[0m"
 #  ================================
 book = AddressBook()
-# book.load_from_file('contact_book.json')
+# book.load_from_file('address_book.json')
 
 sanitize_phone_number = input_errors(sanitize_phone_number)
 
@@ -60,7 +60,7 @@ def add_contact(name, *phones):
         else:
             return f"{RED}Phone {phone} is not valid and not added to {name}{RESET}"
     # Save the address book to the file after all phone numbers are added
-    book.save_to_file('contact_book.json')
+    book.save_to_file('address_book.json')
 
     return f"{GREEN}Contact {name} was added successfully!{RESET}"
 
@@ -265,7 +265,7 @@ def main():
 
 if __name__ == "__main__":
     try:
-        book = AddressBook.load_from_file('contact_book.json')
+        book = AddressBook.load_from_file('address_book.json')
     except (FileNotFoundError, EOFError) as e:
         print(f"{RED}Error loading address book: {e}{RESET}")
         print(f"{YELLOW}Creating a new address book.{RESET}")

@@ -112,33 +112,37 @@ class AddressBook(UserDict):
             None
         """
         data_to_serialize = AddressBook.convert_to_serializable(self)
+        print(data_to_serialize)
         with open(file_name, 'w', encoding="utf-8") as f:
             json.dump(data_to_serialize, f)
 
     @staticmethod
     def load_from_file(file_name):
         """
-        Load an instance from a binary file using pickle.
+        Load an instance from a JSON file.
 
         Args:
             file_name (str): The name of the file to load the instance from.
 
         Returns:
-            object: The loaded instance.
+            AddressBook: The loaded instance.
         """
         try:
             with open(file_name, 'r', encoding="utf-8") as f:
                 data = json.load(f)
+                print(data)
                 address_book = AddressBook()
+                print(address_book)
                 for name, record_data in data.items():
+                    print(record_data)
                     new_record = Record(record_data['name'])
                     phones = record_data['phones']
+                    birthday = record_data['birthday']
+                    if birthday == 'null':
+                        birthday = None
                     for phone in phones:
                         new_record.add_phone(phone)
-                    birthday = record_data['birthday']
-                    if birthday == 'null':  # Змінюємо тут
-                        birthday = None
-                    if birthday:
+                    if birthday is not None:
                         new_record.add_birthday(birthday)
                     address_book.add_record(new_record)
                 return address_book
@@ -146,7 +150,6 @@ class AddressBook(UserDict):
             # Handle the case where the file is not found or empty
             print(e)
             return AddressBook()
-
     def find(self, param):
         """
         Find records that match the given parameter.
