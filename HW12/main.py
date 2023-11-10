@@ -1,4 +1,4 @@
-"""hw_11"""
+"""hw_12"""
 # from field import Field
 # from classPhone import Phone
 # from className import Name
@@ -15,7 +15,7 @@ PINK = "\033[95m"
 RESET = "\033[0m"
 #  ================================
 book = AddressBook()
-book.load_from_file('contact_book.bin')
+# book.load_from_file('contact_book.json')
 
 sanitize_phone_number = input_errors(sanitize_phone_number)
 
@@ -60,7 +60,7 @@ def add_contact(name, *phones):
         else:
             return f"{RED}Phone {phone} is not valid and not added to {name}{RESET}"
     # Save the address book to the file after all phone numbers are added
-    book.save_to_file('contact_book.bin')
+    book.save_to_file('contact_book.json')
 
     return f"{GREEN}Contact {name} was added successfully!{RESET}"
 
@@ -82,7 +82,7 @@ def change_contact(name, old_phone, phone):
         if old_phone in record.get_all_phones():
             record.edit_phone(old_phone, phone)
             # Save the address book to a file after making the change
-            book.save_to_file('address_book.dat')
+            book.save_to_file('address_book.json')
             return f"{GREEN} Contact {name}: {old_phone} was successfully changed!\n New data: {name}: {phone}{RESET}"
         else:
             return f"{RED}There is no number {phone} in {name} contact{RESET}"
@@ -175,7 +175,7 @@ def add_birthday(name, date):
     else:
         contact.add_birthday(date)
         # Save the address book to a file after adding the birthday
-        book.save_to_file('address_book.dat')
+        book.save_to_file('address_book.json')
         return f"{GREEN} Was update {name}'s birthday date{RESET}"
 
 
@@ -188,7 +188,7 @@ def edit_birthday(name, date):
     else:
         contact.edit_birthday(date)
         # Save the address book to a file after editing the birthday
-        book.save_to_file('address_book.dat')
+        book.save_to_file('address_book.json')
         return f"{GREEN} Was update {name}'s birthday date{RESET}"
 
 
@@ -252,22 +252,23 @@ def main():
                 print(f"{RED}Example: \nedit-birthday <name> <YYYY-MM-DD>{RESET}")
             else:
                 edit_birthday(input_data[1], input_data[2])
-        # elif input_command == "find":
-        #     try:
-        #         search_param = input_data[1]
-        #         result = book.find(search_param)
-        #         print(f"{GREEN}Matching records:\n{result}{RESET}")
-        #     except IndexError:
-        #         print(f"{RED}You have to provide a search parameter after 'find'.{RESET}")
+        elif input_command == "find":
+            try:
+                search_param = input_data[1]
+                result = book.find(search_param)
+                print(f"{GREEN}Matching records:\n{result}{RESET}")
+            except IndexError:
+                print(f"{RED}You have to provide a search parameter after 'find'.{RESET}")
         else:
             print(f"{RED}Don't know this command{RESET}")
 
 
 if __name__ == "__main__":
     try:
-        book.load_from_file('contact_book.bin')
+        book = AddressBook.load_from_file('contact_book.json')
     except (FileNotFoundError, EOFError) as e:
         print(f"{RED}Error loading address book: {e}{RESET}")
         print(f"{YELLOW}Creating a new address book.{RESET}")
+        book = AddressBook()  # Creating a new instance
 
     main()

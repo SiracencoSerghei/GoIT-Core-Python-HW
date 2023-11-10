@@ -1,6 +1,13 @@
 from collections import UserDict
 from classRecord import Record
-import pickle
+import json
+
+RED = "\033[91m"
+GREEN = "\033[92m"
+BLUE = "\033[94m"
+YELLOW = "\033[43m"
+PINK = "\033[95m"
+RESET = "\033[0m"
 
 
 class AddressBook(UserDict):
@@ -75,6 +82,25 @@ class AddressBook(UserDict):
             yield records[i:i + chunk_size]
             i += chunk_size
 
+    @staticmethod
+    def convert_to_serializable(address_book):
+        """Converts the AddressBook object to a serializable format.
+
+            Args:
+                address_book (AddressBook): The AddressBook object to convert.
+
+            Returns:
+                dict: A dictionary containing the serialized data.
+            """
+        serializable_data = {}
+        for key, record in address_book.items():
+            serializable_data[key] = {
+                "name": record.name.value,
+                "phones": record.get_all_phones(),
+                "birthday": str(record.birthday) if record.birthday else None
+            }
+        return serializable_data
+
     def save_to_file(self, file_name):
         """
         Save the instance to a binary file using pickle.
@@ -85,8 +111,9 @@ class AddressBook(UserDict):
         Returns:
             None
         """
-        with open(file_name, 'wb') as f:
-            pickle.dump(self, f)
+        data_to_serialize = AddressBook.convert_to_serializable(self)
+        with open(file_name, 'w') as f:
+            json.dump(data_to_serialize, f)
 
     @staticmethod
     def load_from_file(file_name):
@@ -100,31 +127,52 @@ class AddressBook(UserDict):
             object: The loaded instance.
         """
         try:
-            with open(file_name, 'rb') as f:
-                return pickle.load(f)
-        except (FileNotFoundError, EOFError):
+            with open(file_name, 'r') as f:
+                data = json.load(f)
+                address_book = AddressBook()
+                for name, record_data in data.items():
+                    new_record = Record(record_data['name'])
+                    phones = record_data['phones']
+                    for phone in phones:
+                        new_record.add_phone(phone)
+                    birthday = record_data['birthday']
+                    if birthday == 'null':  # Змінюємо тут
+                        birthday = None
+                    if birthday:
+                        new_record.add_birthday(birthday)
+                    address_book.add_record(new_record)
+                return address_book
+        except (FileNotFoundError, EOFError) as e:
             # Handle the case where the file is not found or empty
+            print(e)
             return AddressBook()
 
-    # def find(self, param):
-    #     """
-    #     Find records that match the given parameter.
+    def find(self, param):
+        """
+        Find records that match the given parameter.
 
-    #     Args:
-    #         param (str): The search parameter.
+        Args:
+            param (str): The search parameter.
 
-    #     Returns:
-    #         str: A string containing the matching records, separated by newline.
+        Returns:
+            str: A string containing the matching records, separated by newline.
 
-    #     Note:
-    #         If the search parameter is less than 3 characters, it returns an error message.
-    #     """
-    #     if len(param) < 3:
-    #         return "Sorry, search parameter must be less than 3 characters"
-
-    #     result = []
-    #     for record in self.values():
-    #         if param == str(record):
-    #             result.append(str(record))
-
-    #     return '\n'.join(result)
+        Note:
+            If the search parameter is less than 3 characters, it returns an error message.
+        """
+        if len(param) < 1:
+            return "Sorry, search parameter must be more than 1 characters"
+        result = []
+        for record in self.values():
+            # print(record)
+            if param.isdigit():
+                matching_phones = [phone for phone in record.get_all_phones() if param in phone]
+                if matching_phones:
+                    result.append(str(record))
+            if record.birthday and param in str(record.birthday):
+                result.append(str(record))
+            elif param.isalpha() and param in record.name.value:
+                result.append(str(record))
+        if not result:
+            return "No records found for the given parameter."
+        return '\n'.join(result)
