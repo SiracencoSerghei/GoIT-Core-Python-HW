@@ -1,6 +1,6 @@
 from collections import UserDict
-from classRecord import Record
 import json
+from classRecord import Record
 
 RED = "\033[91m"
 GREEN = "\033[92m"
@@ -112,7 +112,7 @@ class AddressBook(UserDict):
             None
         """
         data_to_serialize = AddressBook.convert_to_serializable(self)
-        with open(file_name, 'w') as f:
+        with open(file_name, 'w', encoding="utf-8") as f:
             json.dump(data_to_serialize, f)
 
     @staticmethod
@@ -127,7 +127,7 @@ class AddressBook(UserDict):
             object: The loaded instance.
         """
         try:
-            with open(file_name, 'r') as f:
+            with open(file_name, 'r', encoding="utf-8") as f:
                 data = json.load(f)
                 address_book = AddressBook()
                 for name, record_data in data.items():
