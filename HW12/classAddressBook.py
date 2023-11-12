@@ -112,7 +112,6 @@ class AddressBook(UserDict):
             None
         """
         data_to_serialize = AddressBook.convert_to_serializable(self)
-        print(data_to_serialize)
         with open(file_name, 'w', encoding="utf-8") as f:
             json.dump(data_to_serialize, f)
 
@@ -143,9 +142,8 @@ class AddressBook(UserDict):
                         new_record.add_birthday(birthday)
                     address_book.add_record(new_record)
                 return address_book
-        except (FileNotFoundError, EOFError) as e:
+        except (FileNotFoundError, EOFError):
             # Handle the case where the file is not found or empty
-            print(e)
             return AddressBook()
     def find(self, param):
         """
@@ -164,7 +162,6 @@ class AddressBook(UserDict):
             return "Sorry, search parameter must be more than 1 characters"
         result = []
         for record in self.values():
-            # print(record)
             if param.isdigit():
                 matching_phones = [phone for phone in record.get_all_phones() if param in phone]
                 if matching_phones:
