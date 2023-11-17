@@ -36,6 +36,8 @@ class AddressBook(UserDict):
             Record or None: The record if found, or None if not found.
         """
         if name in self.data:
+            print(self.data)
+            print(self.data[name])
             return self.data[name]
         else:
             return None
@@ -173,3 +175,21 @@ class AddressBook(UserDict):
         if not result:
             return "No records found for the given parameter."
         return '\n'.join(result)
+
+
+
+my_dict = AddressBook()
+my_record = Record("Sergio", "1978-02-09")
+my_dict.add_record(my_record)
+
+print(my_dict.data.keys())
+for key, value in my_dict.data.items():
+    print(f"{key}: {value}")
+
+sergio_record = my_dict.find_name("Sergio")
+
+if sergio_record:
+    sergio_record.name.value = "Pietro"
+    print("Record updated successfully.")
+else:
+    print("Sergio not found in the address book.")
