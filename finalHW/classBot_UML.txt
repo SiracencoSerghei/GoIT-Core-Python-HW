@@ -1,0 +1,17 @@
+@startuml
+class Bot {
+    load_address_book()
+    greeting()
+    good_bye()
+    add_contact()
+    change_contact()
+    showall()
+    get_phone()
+    days_to_birthday()
+    add_birthday()
+    edit_birthday()
+    run()
+        book
+    __init__()
+}
+@enduml
