@@ -1,4 +1,4 @@
-from field import Field
+from Classes.Field import Field
 
 
 class Phone(Field):
@@ -14,7 +14,7 @@ class Phone(Field):
             raise ValueError("Phone number must be a ten digit string of digits")
         super().__init__(value)
 
-    def __set__(self, new_value):
+    def __set__(self, instance, new_value):
         if not Phone.is_valid_phone(new_value):
             raise ValueError("Phone number must be a ten digit string of digits")
-        super().__set__(new_value)
+        super().__set__(instance, new_value)

@@ -1,6 +1,7 @@
-from className import Name
-from classPhone import Phone
-from classBirthday import Birthday
+from Classes.Name import Name
+from Classes.Phone import Phone
+from Classes.Birthday import Birthday
+
 from datetime import datetime
 
 

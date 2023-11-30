@@ -1,5 +1,5 @@
 from datetime import datetime
-from field import Field
+from Classes.Field import Field
 RED = "\033[91m"
 RESET = "\033[0m"
 

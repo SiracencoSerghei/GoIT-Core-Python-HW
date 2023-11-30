@@ -1,4 +1,4 @@
-from classBot import Bot
+from Classes.CLIBot import Bot
 
 
 if __name__ == "__main__":

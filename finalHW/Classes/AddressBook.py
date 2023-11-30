@@ -1,6 +1,6 @@
 from collections import UserDict
 import json
-from classRecord import Record
+from Classes.Record import Record
 
 RED = "\033[91m"
 GREEN = "\033[92m"

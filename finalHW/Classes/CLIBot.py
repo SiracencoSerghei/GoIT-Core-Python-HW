@@ -1,13 +1,10 @@
-
-from classAddressBook import AddressBook
-from classRecord import Record
+from Classes.Record import Record
+from Classes.AddressBook import AddressBook
 from decorators.input_errors import input_errors
-from sanitize_phone_nr import sanitize_phone_number
+from Utils.sanitize_phone_nr import sanitize_phone_number
 
-
-
+# I'm applying the decorator directly, overwriting the function
 sanitize_phone_number = input_errors(sanitize_phone_number)
-
 
 RED = "\033[91m"
 GREEN = "\033[92m"
@@ -15,6 +12,8 @@ BLUE = "\033[94m"
 YELLOW = "\033[43m"
 PINK = "\033[95m"
 RESET = "\033[0m"
+
+
 #  ================================
 
 class Bot:
@@ -25,15 +24,17 @@ class Bot:
         self.__exit_commands = ("goodbye", "close", "exit", ".")
         self.book = self.load_address_book()
 
-    def load_address_book(self):
+    @staticmethod
+    def load_address_book():
         try:
-            return AddressBook.load_from_file('address_book.json')
+            return AddressBook.load_from_file('outputs/address_book.json')
         except (FileNotFoundError, EOFError) as e:
             print(f"{RED}Error loading address book: {e}{RESET}")
             print(f"{YELLOW}Creating a new address book.{RESET}")
             return AddressBook()  # Creating a new instance
 
-    def greeting(self):
+    @staticmethod
+    def greeting():
         """Greet the user.
 
         Returns:
@@ -41,8 +42,8 @@ class Bot:
         """
         return "How can I help you?"
 
-
-    def good_bye(self):
+    @staticmethod
+    def good_bye():
         """Bid farewell to the user.
 
         Returns:
@@ -71,7 +72,7 @@ class Bot:
                 contact.add_phone(sanitized_phone)
             else:
                 return f"{RED}Phone {phone} is not valid and not added to {name}{RESET}"
-        self.book.save_to_file('address_book.json')
+        self.book.save_to_file('outputs/address_book.json')
         return f"{GREEN}Contact {name} was added successfully!{RESET}"
 
     @input_errors
@@ -91,8 +92,9 @@ class Bot:
             if old_phone in record.get_all_phones():
                 record.edit_phone(old_phone, phone)
                 # Save the address book to a file after making the change
-                self.book.save_to_file('address_book.json')
-                return f"{GREEN} Contact {name}: {old_phone} was successfully changed!\n New data: {name}: {phone}{RESET}"
+                self.book.save_to_file('outputs/address_book.json')
+                return (f"{GREEN} Contact {name}: {old_phone} was successfully changed!\n "
+                        f"New data: {name}: {phone}{RESET}")
             else:
                 return f"{RED}There is no number {phone} in {name} contact{RESET}"
         else:
@@ -180,7 +182,7 @@ class Bot:
         else:
             contact.add_birthday(date)
             # Save the address book to a file after adding the birthday
-            self.book.save_to_file('address_book.json')
+            self.book.save_to_file('outputs/address_book.json')
             return f"{GREEN} Was update {name}'s birthday date{RESET}"
 
     @input_errors
@@ -192,7 +194,7 @@ class Bot:
         else:
             contact.edit_birthday(date)
             # Save the address book to a file after editing the birthday
-            self.book.save_to_file('address_book.json')
+            self.book.save_to_file('outputs/address_book.json')
             return f"{GREEN} Was update {name}'s birthday date{RESET}"
 
     known_commands = (
@@ -208,7 +210,7 @@ class Bot:
                    None
                """
         try:
-            book = AddressBook.load_from_file('address_book.json')
+            book = AddressBook.load_from_file('outputs/address_book.json')
         except (FileNotFoundError, EOFError) as e:
             print(f"{RED}Error loading address book: {e}{RESET}")
             print(f"{YELLOW}Creating a new address book.{RESET}")
@@ -237,7 +239,8 @@ class Bot:
                     case "change":
                         if len(input_data) < 4:
                             print(
-                                f"{RED}You have to put name, old phone, and new phone after change. Example: \nchange <name> "
+                                f"{RED}You have to put name, old phone, and new phone after change. "
+                                f"Example: \nchange <name> "
                                 f"<old_phone> <new_phone>{RESET}")
                         else:
                             print(self.change_contact(input_data[1], input_data[2], input_data[3]))
@@ -251,10 +254,9 @@ class Bot:
                         print(self.get_phone(input_data[1]))
                     case "days-to-birthday":
                         if len(input_data) < 2:
-                            # noinspection LongLine
                             print(
-                            f"{RED}You need to provide a name after 'days-to-birthday'. "
-                            f"Example: days-to-birthday <name>{RESET}"
+                                f"{RED}You need to provide a name after 'days-to-birthday'. "
+                                f"Example: days-to-birthday <name>{RESET}"
                             )
                         else:
                             print(self.days_to_birthday(input_data[1]))
@@ -280,4 +282,3 @@ class Bot:
 
             else:
                 print(f"{RED}Don't know this command{RESET}")
-
